@@ -4,27 +4,25 @@
 
 - Créer des événements
 - Recherche des événements
-- Au moins deux rôles (utilisateur / organisateur)
+- CRUD sur événements
 - Inscriptions aux événements
-- désinscription aux événements
+- Désinscription aux événements
+- Prix de l'événement
 - États des événements (publié, en cours, terminés)
 - États des inscriptions (ouvertes, complètes, fermées)
-- Rejet de la demande si événement complet
-- Page de profil (plannings)
-- Limite de participants
-- Prix de l'événement
-- Gestion d'utilisateur (admin)
 - Connexion / création de comptes (automatisé Laravel)
 - Déconnexion
-- Poster des images
-- Limite d'âge
-- CRUD sur événements
-- Tags associés (recherche)
-- Lieu (localisation hors google maps)
+- Au moins deux rôles (utilisateur / organisateur)
+- Page de profil (plannings)
 - Ajouter des limites aux champs db
 - Pas oublier la règle des 3 clics
 
 ## Secondaires
+- Limite de participants par événement
+- Rejet de la demande si événement complet
+- Poster des images de l'événement
+- Limite d'âge par événement
+- Tags associés (recherche)
 - Plus de rôles
 - Plus d'états d'événements
 - Localisation Google maps
