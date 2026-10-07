@@ -5,7 +5,6 @@ erDiagram
 
     USERS {
         bigint id PK
-        varchar name
         varchar email UK
         varchar password
         bigint role_id FK
