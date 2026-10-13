@@ -24,13 +24,21 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        shema::create('tags', function (Blueprint $table) {
+        // pour cette partie, j'ai demander à une iA de m'aider à générer ce code.
+        Schema::table('users', function (Blueprint $table) {
+            $table->foreignId('role_id')
+                ->nullable()
+                ->constrained('roles')
+                ->nullOnDelete();
+        });
+
+        Schema::create('tags', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->timestamps();
         });
 
-        shema::create('events', function (Blueprint $table) {
+        Schema::create('events', function (Blueprint $table) {
             $table->id();
             $table->foreignId('organizer_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('location_id')->constrained()->onDelete('cascade');
@@ -46,18 +54,19 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        shema::create('registrations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('event_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+        Schema::create('registrations', function (Blueprint $table) {
+            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('user_id')->constrained()->cascadeOnDelete();
+            $table->enum('status', ['pending', 'approved', 'rejected'])->default('pending');
             $table->timestamps();
+            $table->primary(['event_id', 'user_id']);
         });
 
-        shema::create('event_tag', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('event_id')->constrained()->onDelete('cascade');
-            $table->foreignId('tag_id')->constrained()->onDelete('cascade');
+        Schema::create('event_tag', function (Blueprint $table) {
+            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
+            $table->foreignId('tag_id')->constrained()->cascadeOnDelete();
             $table->timestamps();
+            $table->primary(['event_id', 'tag_id']);
         });
     }
 
@@ -68,6 +77,13 @@ return new class extends Migration
     {
         Schema::dropIfExists('locations');
         Schema::dropIfExists('roles');
+
+        // pour cette partie, j'ai demander à une iA de m'aider à générer ce code.
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropForeign(['role_id']);
+            $table->dropColumn('role_id');
+        });
+
         Schema::dropIfExists('tags');
         Schema::dropIfExists('events');
         Schema::dropIfExists('registrations');
