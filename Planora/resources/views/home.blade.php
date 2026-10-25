@@ -70,9 +70,9 @@
                     <div class="home-card-bottom"><span>@if(isset($trip['price']))<strong>{{ $trip['price'] }} €</strong> / pers.@else<strong>Budget à venir</strong>@endif</span>
                         {{-- TODO PHP: provide a real URL for the trip details page. --}}
                         @if(!empty($trip['url']))
-                        <a class="home-card-link" href="{{ $trip['url'] }}" aria-label="Découvrir {{ $trip['title'] ?? 'le voyage' }}">↗</a>
+                            <a class="home-card-link" href="{{ $trip['url'] }}" aria-label="Découvrir {{ $trip['title'] ?? 'le voyage' }}">↗</a>
                         @else
-                        <span class="home-card-link" aria-hidden="true">↗</span>
+                            <span class="home-card-link" aria-hidden="true">↗</span>
                         @endif
                     </div>
                 </div>

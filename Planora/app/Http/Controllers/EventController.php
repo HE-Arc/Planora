@@ -48,6 +48,16 @@ class EventController extends Controller
             ->with('success','Event deleted successfully');
     }
 
+    /**
+     * Display the specified event.
+     */
+    public function show(string $id)
+    {
+        $event = \App\Models\Event::findOrFail($id);
+        return view('events.show', ['event' => $event]);
+    }
+
+
     public function publish()
     {
 
