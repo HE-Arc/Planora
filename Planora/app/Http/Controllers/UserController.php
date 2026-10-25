@@ -15,7 +15,7 @@ class UserController extends Controller
      */    
     public function register()
     {
-        
+        return view('users.register');
     }
 
     /**
@@ -23,8 +23,8 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        // $user = \App\Models\User::where('id', $id)->firstOrFail();
-        // return view('users.edit', ['book' => $user]);
+        $user = \App\Models\User::where('id', $id)->firstOrFail();
+        return view('users.edit', ['user' => $user]);
     }
 
     /**
@@ -32,9 +32,9 @@ class UserController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // \App\Models\user::findOrFail($id)->update($request->all());
-        // return redirect()->route('users.index')
-        //     ->with('success','User updated successfully');
+        \App\Models\user::findOrFail($id)->update($request->all());
+        return redirect()->route('users.index')
+            ->with('success','User updated successfully');
     }
 
     /**
