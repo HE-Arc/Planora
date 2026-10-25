@@ -27,6 +27,7 @@ erDiagram
         enum status
         datetime starts_at
         datetime ends_at
+        varchar image_url
     }
 
     REGISTRATIONS {
