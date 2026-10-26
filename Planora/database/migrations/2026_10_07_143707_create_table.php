@@ -24,12 +24,17 @@ return new class extends Migration
             $table->timestamps();
         });
 
-        // pour cette partie, j'ai demander à une iA de m'aider à générer ce code.
+        // Fait par iA, mais vérifié par nous même
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('role_id')
                 ->nullable()
                 ->constrained('roles')
                 ->nullOnDelete();
+            $table->dropColumn([
+                'name',
+                'email_verified_at',
+                'remember_token',
+            ]);
         });
 
         Schema::create('tags', function (Blueprint $table) {
@@ -78,10 +83,13 @@ return new class extends Migration
         Schema::dropIfExists('locations');
         Schema::dropIfExists('roles');
 
-        // pour cette partie, j'ai demander à une iA de m'aider à générer ce code.
+        // Fait par iA, mais vérifié par nous même
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['role_id']);
             $table->dropColumn('role_id');
+            $table->string('name');
+            $table->timestamp('email_verified_at')->nullable();
+            $table->rememberToken();
         });
 
         Schema::dropIfExists('tags');
