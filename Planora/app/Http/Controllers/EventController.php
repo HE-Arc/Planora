@@ -7,6 +7,15 @@ use Illuminate\Http\Request;
 class EventController extends Controller
 {
     /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $events = \App\Models\Event::latest()->get();
+        return view('home', ['events' => $events]);
+    }
+
+    /**
      * Create a new event.
      */
     public function create(Request $request)

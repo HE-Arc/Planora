@@ -46,30 +46,30 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($locations as $location) {
-            \App\Models\Location::create(
+            \App\Models\Location::create(array(
                 'name' => $location['name'],
                 'address' => $location['address']   
-            );
+            ));
         }
 
         foreach ($roles as $role) {
-            \App\Models\Role::create(
+            \App\Models\Role::create(array( 
                 'name' => $role['name']
-            );
+            ));
         }
 
         foreach ($users as $user) {
-            \App\Models\User::create(
+            \App\Models\User::create(array(
                 'email' => $user['email'],
                 'password' => $user['password'],
                 'role_id' => $user['role_id']
-            );
+            ));
         }
 
         foreach ($tags as $tag) {
-            \App\Models\Tag::create(
+            \App\Models\Tag::create(array(
                 'name' => $tag['name']
-            );
+            ));
         }
     }
 }
