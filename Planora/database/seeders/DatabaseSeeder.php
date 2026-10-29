@@ -45,6 +45,51 @@ class DatabaseSeeder extends Seeder
             ['name' => 'party'],
         ];
 
+        $events = [
+            [
+                'organizer_id' => 1,
+                'location_id' => 1,
+                'title' => 'Randonnée au Creux du Van',
+                'description' => 'Une randonnée conviviale pour découvrir les paysages du Creux du Van.',
+                'price' => 0,
+                'max_participants' => 20,
+                'min_age' => 16,
+                'status' => 'open',
+                'starts_at' => '2026-11-07 09:00:00',
+                'ends_at' => '2026-11-07 16:00:00',
+                'image_url' => null,
+                'updated_at' => now(),
+            ],
+            [
+                'organizer_id' => 1,
+                'location_id' => 1,
+                'title' => 'Atelier cuisine italienne',
+                'description' => 'Apprenez à préparer des pâtes fraîches et une sauce maison.',
+                'price' => 25,
+                'max_participants' => 12,
+                'min_age' => 18,
+                'status' => 'open',
+                'starts_at' => '2026-11-14 14:00:00',
+                'ends_at' => '2026-11-14 17:00:00',
+                'image_url' => null,
+                'updated_at' => now(),
+            ],
+            [
+                'organizer_id' => 1,
+                'location_id' => 1,
+                'title' => 'Soirée jeux de société',
+                'description' => 'Une soirée conviviale autour de jeux de stratégie et de coopération.',
+                'price' => 5,
+                'max_participants' => 30,
+                'min_age' => 12,
+                'status' => 'open',
+                'starts_at' => '2026-11-20 18:30:00',
+                'ends_at' => '2026-11-20 22:00:00',
+                'image_url' => null,
+                'updated_at' => now(),
+            ],
+        ];
+
         foreach ($locations as $location) {
             \App\Models\Location::create(array(
                 'name' => $location['name'],
@@ -70,6 +115,26 @@ class DatabaseSeeder extends Seeder
             \App\Models\Tag::create(array(
                 'name' => $tag['name']
             ));
+        }
+
+        // foreach ($events as $event) {
+        //     \App\Models\Event::create(array(
+        //         'organizer_id' => $event['organizer_id'],
+        //         'location_id' => $event['location_id'],
+        //         'title' => $event['title'],
+        //         'description' => $event['description'],
+        //         'price' => $event['price'],
+        //         'max_participants' => $event['max_participants'],
+        //         'min_age' => $event['min_age'],
+        //         'status' => $event['status'],
+        //         'starts_at' => $event['starts_at'],
+        //         'ends_at' => $event['ends_at'],
+        //         'image_url' => $event['image_url'],
+        //         'created_at' => $event['created_at'],
+        //         'updated_at' => $event['updated_at']
+        //     ));
+        foreach ($events as $event) {
+            \App\Models\Event::create($event);
         }
     }
 }

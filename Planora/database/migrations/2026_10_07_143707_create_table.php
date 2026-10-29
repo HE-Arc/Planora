@@ -56,7 +56,7 @@ return new class extends Migration
             $table->dateTime('starts_at');
             $table->dateTime('ends_at');
             $table->string('image_url')->nullable();
-            $table->timestamps();
+            $table->timestamps('updated_at');
         });
 
         Schema::create('registrations', function (Blueprint $table) {
