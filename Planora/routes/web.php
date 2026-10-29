@@ -10,6 +10,7 @@ Route::get('/', function () {
 
 Route::get('/', [EventController::class, 'index'])->name('events.index');
 Route::get('/event/{id}', [EventController::class, 'show'])->name('events.show');
+Route::get('/event/add', [EventController::class, 'add'])->name('events.add');
 
 Route::resource('events', EventController::class);
 
