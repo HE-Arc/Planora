@@ -2,45 +2,82 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Http\Requests\SaveEventRequest;
+use App\Models\Event;
+use App\Models\Location;
+use App\Models\Tag;
+use App\Models\User;
 
 class EventController extends Controller
 {
+
+    public function show(Event $event) {
+        $event->load(['location', 'organizer', 'tags']);
+
+        return view('trips.form', [
+            'mode' => 'view',
+            'event' => $event,
+            'locations' => Location::orderBy('name')->get(),
+            'tags' => Tag::orderBy('name')->get(),
+        ]);
+    }
+
+    public function create() {
+        return view('trips.form', [
+            'mode' => 'create',
+            'event' => new Event(),
+            'locations' => Location::orderBy('name')->get(),
+            'tags' => Tag::orderBy('name')->get(),
+        ]);
+    }
     /**
      * Create a new event.
      */
-    public function create(Request $request)
+    public function store(SaveEventRequest $request)
     {
-        \App\Models\Event::create(
-            $request->validate([
-                'location_id' => 'required|exists:locations,id',
-                'title' => 'required|string|max:255',
-                'description' => 'required|string',
-                'price' => 'required|numeric|min:0',
-                'max_participants' => 'required|integer|min:1',
-                'min_age' => 'required|integer|min:0',
-                'starts_at' => 'required|date',
-                'ends_at' => 'required|date|after:starts_at',
-            ])
+        //To-do Later : use real logged user
+        $organizer = User::where('email', 'Sacha.Gruring@he-arc.ch')->first();
+
+        abort_if(
+            $organizer === null,
+            503,
+            "demo user not in database"
         );
-        return redirect()->route('events.index')
+
+        $event = new Event($request->validated());
+        $event->organizer()->associate($organizer);
+        $event->status = 'open';
+        $event->save();
+
+        return redirect()->route('events.show', $event)
             ->with('success','Event created successfully.');
+    }
+
+    public function edit(Event $event) {
+        $event->load(['location', 'organizer', 'tags']);
+
+        return view('trips.form', [
+            'mode' => 'edit',
+            'event' => $event,
+            'locations' => Location::orderBy('name')->get(),
+            'tags' => Tag::orderBy('name')->get(),
+        ]);
     }
 
     /**
      * Update the specified event.
      */
-    public function update(Request $request, string $id)
+    public function update(SaveEventRequest $request, Event $event)
     {
-        \App\Models\Event::findOrFail($id)->update($request->all());
-        return redirect()->route('events.index')
+        $event->update($request->validated());
+        return redirect()->route('events.show', $event)
             ->with('success','Event updated successfully');
     }
 
     /**
      * Remove the specified event.
      */
-    public function delete(string $id)
+    public function destroy(string $id)
     {
         $event = \App\Models\Event::find($id);
         $event->delete();
