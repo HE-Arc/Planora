@@ -3,49 +3,66 @@
 @section('title', 'Votre voyage — Planora')
 
 @section('content')
-{{-- TODO PHP: pass $mode ('view', 'create' or 'edit') and $trip as an array.
-     Replace the sample data with real values. Keep authorization on the server.
-     This view only displays a mockup; it does not submit or persist data. --}}
+{{-- The controller supplies $event with its location, organizer and tags relations.
+     TODO PHP: enforce authorization on the server. --}}
 @php
     $mode = in_array($mode ?? 'view', ['view', 'create', 'edit'], true) ? ($mode ?? 'view') : 'view';
-    $trip = $trip ?? [
-        'title' => 'L’océan pour horizon', 'country' => 'Portugal', 'tag' => 'Détente',
-        'description' => 'Une semaine entre Lisbonne et la côte atlantique. Au programme : des ruelles à explorer, des repas partagés et des baignades sans regarder l’heure. Un voyage à taille humaine, où chacun trouve sa place.',
-        'departure' => '2027-06-12', 'return' => '2027-06-19', 'age' => '18–30 ans',
-        'capacity' => 6, 'available' => 3, 'price' => 480, 'contact' => null,
-        'organizer' => 'Camille', 'status' => 'Inscriptions ouvertes',
-    ];
 @endphp
 <div class="trip-page" data-trip-page data-mode="{{ $mode }}">
     <div class="trip-topline">
-        {{-- TODO PHP: provide $backUrl once the listing route is available. --}}
+        {{-- TODO PHP: provide $backUrl once the home/listing page is implemented. --}}
         @if(!empty($backUrl))<a class="trip-back" href="{{ $backUrl }}">← Tous les voyages</a>@else<span class="trip-back">VOTRE PROCHAINE ESCALE</span>@endif
-        {{-- TODO: remove this demo switch when the server selects the mode. --}}
-        <fieldset class="trip-mode-switch"><legend>Mode de démonstration</legend>
-            @foreach(['view' => 'Consulter', 'create' => 'Créer', 'edit' => 'Modifier'] as $value => $label)
-            <label><input type="radio" name="preview_mode" value="{{ $value }}" @checked($mode === $value)><span>{{ $label }}</span></label>
-            @endforeach
-        </fieldset>
     </div>
     <header class="trip-heading">
-        <div><p class="eyebrow" data-display="eyebrow">{{ $trip['country'] ?? 'Destination à venir' }} · {{ $trip['tag'] ?? 'À découvrir' }}</p><h1 data-mode-title>{{ $mode === 'create' ? 'Et si vous donniez le départ ?' : ($trip['title'] ?? 'Votre prochaine aventure') }}</h1><p class="trip-lead" data-mode-subtitle>{{ $mode === 'create' ? 'Quelques détails pour donner aux autres l’envie de vous suivre.' : ($mode === 'edit' ? 'Affinez les petits détails de votre prochaine escapade.' : 'Une parenthèse pour soi. Des souvenirs à plusieurs.') }}</p></div>
-        <span class="trip-status" data-read>{{ $trip['status'] ?? 'Statut à confirmer' }}</span>
+        <div><p class="eyebrow" data-display="eyebrow">{{ $event->location?->name ?? 'Lieu à préciser' }} · {{ $event->tags->pluck('name')->join(', ') ?: 'Aucun tag' }}</p><h1 data-mode-title>{{ $mode === 'create' ? 'Et si vous donniez le départ ?' : ($event->title ?? 'Votre prochaine aventure') }}</h1><p class="trip-lead" data-mode-subtitle>{{ $mode === 'create' ? 'Quelques détails pour donner aux autres l’envie de vous suivre.' : ($mode === 'edit' ? 'Affinez les petits détails de votre prochaine escapade.' : 'Une parenthèse pour soi. Des souvenirs à plusieurs.') }}</p></div>
+        <span class="trip-status" data-read>{{ $event->status ?? 'Statut à confirmer' }}</span>
     </header>
+    @if (session('success'))
+        <p class="trip-feedback" role="status">
+            {{ session('success') }}
+        </p>
+    @endif
 
-    {{-- TODO PHP: add the action, POST method, CSRF token, PATCH override for editing,
-         server-side validation and error messages once the backend is ready. --}}
-    <form class="trip-layout" data-trip-form>
+    @if ($errors->any())
+        <div class="trip-feedback" role="alert">
+            <p>Some fields must be corrected :</p>
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+    <form
+        class="trip-layout"
+        data-trip-form
+        @if ($mode !== 'view')
+            method="POST"
+            action="{{ $mode === 'create'
+                ? route('events.store')
+                : route('events.update', $event) }}"
+        @endif
+    >
+        @if ($mode !== 'view')
+            @csrf
+
+            @if ($mode === 'edit')
+                @method('PATCH')
+            @endif
+        @endif
         <div class="trip-main">
             <section class="trip-gallery" aria-label="Aperçu du voyage">
-                {{-- TODO PHP: provide $trip['images'] as an array of photo URLs. --}}
+                {{-- The gallery displays the event's single stored image URL. --}}
                 <div class="trip-gallery-image" data-gallery-image>
                     <svg viewBox="0 0 800 440" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration d’un paysage côtier"><path fill="#cbded8" d="M0 0h800v440H0z"/><circle fill="#fff0cb" cx="585" cy="110" r="64"/><path fill="#9db7a1" d="M0 215q190-115 360 0t440-10v235H0z"/><path fill="#77a4a0" d="M0 275q210-40 450 20t350-15v160H0z"/><path fill="#decaa6" d="M0 292q170 5 370 130l430-55v73H0z"/><path fill="#4c817e" d="M0 350q140-18 300 90H0z"/><path fill="none" stroke="#edf2e5" stroke-width="3" opacity=".65" d="M115 284h130m210 36h110m55-29h95"/></svg>
                 </div>
-                <span class="trip-gallery-caption" data-display="country">{{ $trip['country'] ?? 'Votre destination' }}</span>
+                <span class="trip-gallery-caption" data-display="location">{{ $event->location?->name ?? 'Lieu à préciser' }}</span>
                 <div class="trip-gallery-controls"><button type="button" data-gallery-prev aria-label="Photo précédente">←</button><span data-gallery-counter aria-live="polite">Illustration</span><button type="button" data-gallery-next aria-label="Photo suivante">→</button></div>
                 <span class="trip-gallery-label">L’ENVIE DE PRENDRE LE LARGE</span>
             </section>
             <div class="trip-upload" data-write>
+                {{-- TODO PHP: implement validated image uploads and decide whether
+                     to support multiple images; Event currently stores one image_url. --}}
                 <label for="trip-photos"><span aria-hidden="true">↥</span><strong>Ajoutez vos photos</strong><small>JPG ou PNG · aperçu local uniquement</small></label>
                 <input id="trip-photos" type="file" accept="image/jpeg,image/png" multiple>
                 <p class="trip-hint" data-photo-feedback role="status">Aucune photo sélectionnée.</p>
@@ -53,33 +70,56 @@
 
             <section class="trip-story" data-read>
                 <p class="eyebrow">L’ESPRIT DU VOYAGE</p><h2>Du temps pour soi.<br><em>Des souvenirs à plusieurs.</em></h2>
-                <p class="trip-description" data-display="description">{{ $trip['description'] ?? 'Le programme de ce voyage arrive bientôt.' }}</p>
-                <dl class="trip-facts"><div><dt>Âge conseillé</dt><dd data-display="age">{{ $trip['age'] ?? 'À préciser' }}</dd></div><div><dt>Le groupe</dt><dd data-display="capacity">{{ isset($trip['capacity']) ? $trip['capacity'].' voyageurs' : 'À préciser' }}</dd></div><div><dt>L’ambiance</dt><dd data-display="tag">{{ $trip['tag'] ?? 'À découvrir' }}</dd></div></dl>
+                <p class="trip-description" data-display="description">{{ $event->description ?? 'Le programme de ce voyage arrive bientôt.' }}</p>
+                <dl class="trip-facts"><div><dt>Âge minimum</dt><dd data-display="min_age">{{ isset($event->min_age) ? $event->min_age.' ans' : 'À préciser' }}</dd></div><div><dt>Le groupe</dt><dd data-display="max_participants">{{ isset($event->max_participants) ? $event->max_participants.' voyageurs' : 'À préciser' }}</dd></div><div><dt>Les tags</dt><dd data-display="tags">{{ $event->tags->pluck('name')->join(', ') ?: 'Aucun tag' }}</dd></div></dl>
             </section>
             <section class="surface trip-fields" data-write aria-labelledby="trip-story-heading">
                 <div class="trip-section-heading"><h2 id="trip-story-heading">01 · Racontez le voyage</h2><span>L’envie commence ici</span></div>
-                <label class="form-label" for="trip-title">Nom du voyage <span aria-hidden="true">*</span></label><input class="form-input" id="trip-title" name="title" required maxlength="120" placeholder="Une semaine au bord de l’océan" value="{{ $mode === 'create' ? '' : ($trip['title'] ?? '') }}" data-saved="{{ $trip['title'] ?? '' }}">
-                <div class="trip-columns"><div><label class="form-label" for="trip-country">Pays <span aria-hidden="true">*</span></label><input class="form-input" id="trip-country" name="country" required placeholder="Portugal" value="{{ $mode === 'create' ? '' : ($trip['country'] ?? '') }}" data-saved="{{ $trip['country'] ?? '' }}"></div><div><label class="form-label" for="trip-tag">Ambiance</label><select class="form-input" id="trip-tag" name="tag" data-saved="{{ $trip['tag'] ?? '' }}"><option value="">Choisir une ambiance</option>@foreach(['Nature', 'Culture', 'Aventure', 'Détente'] as $tag)<option @selected($mode !== 'create' && ($trip['tag'] ?? '') === $tag)>{{ $tag }}</option>@endforeach</select></div></div>
-                <label class="form-label" for="trip-description">Votre idée, en quelques mots <span aria-hidden="true">*</span></label><textarea class="form-input" id="trip-description" name="description" rows="6" required placeholder="Le programme, les envies, ce que vous aimeriez partager…" data-saved="{{ $trip['description'] ?? '' }}">{{ $mode === 'create' ? '' : ($trip['description'] ?? '') }}</textarea><p class="trip-hint">Les champs marqués d’un * sont nécessaires pour cet aperçu.</p>
+                <label class="form-label" for="trip-title">Nom du voyage <span aria-hidden="true">*</span></label><input class="form-input" id="trip-title" name="title" required maxlength="255" placeholder="Une semaine au bord de l’océan" value="{{ old('title', $event->title) }}">
+                {{-- TODO PHP: supply all $locations and $tags choices from create/edit.
+                     Without these lists, only the event's current relations are available.
+                     Validate and save the selected tag associations when connecting persistence. --}}
+                <div class="trip-columns">
+                    <div>
+                        <label class="form-label" for="trip-location">Lieu <span aria-hidden="true">*</span></label>
+                        <select class="form-input" id="trip-location" name="location_id" required>
+                            <option value="">Choisir un lieu</option>
+                            @foreach(($locations ?? collect([$event->location])->filter()) as $location)
+                                <option value="{{ $location->id }}" @selected((string) old('location_id', $event->location_id) === (string) $location->id)>{{ $location->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label" for="trip-tags">Tags</label>
+                        <select class="form-input" id="trip-tags" name="tags[]" multiple>
+                            @foreach(($tags ?? $event->tags) as $tag)
+                                <option value="{{ $tag->id }}" @selected(in_array($tag->id, (array) old('tags', $event->tags->modelKeys())))>{{ $tag->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <label class="form-label" for="trip-description">Votre idée, en quelques mots <span aria-hidden="true">*</span></label><textarea class="form-input" id="trip-description" name="description" rows="6" required placeholder="Le programme, les envies, ce que vous aimeriez partager…">{{ old('description', $event->description) }}</textarea><p class="trip-hint">Les champs marqués d’un * sont obligatoires.</p>
             </section>
         </div>
         <aside class="trip-sidebar">
             <section class="surface trip-booking" data-read aria-label="Informations et inscription">
-                <p class="eyebrow">VOTRE PLACE AU SOLEIL</p><p class="trip-price"><span data-display="price">{{ $trip['price'] ?? '—' }}</span> € <small>/ personne</small></p><p class="trip-hint">Budget indicatif pour le séjour</p>
-                <dl class="trip-booking-facts"><div><dt>Départ</dt><dd data-display="departure">{{ !empty($trip['departure']) ? \Carbon\Carbon::parse($trip['departure'])->format('d/m/Y') : 'À préciser' }}</dd></div><div><dt>Retour</dt><dd data-display="return">{{ !empty($trip['return']) ? \Carbon\Carbon::parse($trip['return'])->format('d/m/Y') : 'À préciser' }}</dd></div><div><dt>Disponibilités</dt><dd>{{ isset($trip['available']) ? $trip['available'].' places libres' : 'À confirmer' }}</dd></div></dl>
+                <p class="eyebrow">VOTRE PLACE AU SOLEIL</p><p class="trip-price"><span data-display="price">{{ $event->price ?? '—' }}</span> € <small>/ personne</small></p><p class="trip-hint">Budget indicatif pour le séjour</p>
+                {{-- TODO PHP: define which registration statuses consume a place,
+                     then calculate the remaining capacity. --}}
+                <dl class="trip-booking-facts"><div><dt>Début</dt><dd data-display="starts_at">{{ !empty($event->starts_at) ? \Carbon\Carbon::parse($event->starts_at)->format('d/m/Y H:i') : 'À préciser' }}</dd></div><div><dt>Fin</dt><dd data-display="ends_at">{{ !empty($event->ends_at) ? \Carbon\Carbon::parse($event->ends_at)->format('d/m/Y H:i') : 'À préciser' }}</dd></div><div><dt>Disponibilités</dt><dd>À confirmer</dd></div></dl>
                 {{-- TODO PHP: connect registration and check availability and permissions on the server. --}}
                 <button class="button button-primary trip-full" type="button" data-register>Ça me tente ! <span aria-hidden="true">↗</span></button><p class="trip-hint trip-center">Un premier échange, puis on prépare le départ ensemble.</p>
-                <div class="trip-organizer"><span class="avatar" aria-hidden="true">{{ mb_substr($trip['organizer'] ?? 'P', 0, 1) }}</span><div><small>Votre compagnon de départ</small><strong>{{ $trip['organizer'] ?? 'À remplir' }}</strong></div></div><p class="trip-contact">Contact : <span data-display="contact">{{ $trip['contact'] ?? 'À remplir' }}</span></p>
-                {{-- TODO PHP: provide $createTripUrl when the creation route exists. --}}
+                <div class="trip-organizer"><span class="avatar" aria-hidden="true">{{ mb_substr($event->organizer?->email ?? 'P', 0, 1) }}</span><div><small>Votre compagnon de départ</small><strong>{{ $event->organizer?->email ?? 'Organisateur à préciser' }}</strong></div></div><p class="trip-contact">Contact : <span data-display="contact">{{ $event->organizer?->email ?? 'Contact à préciser' }}</span></p>
+                {{-- TODO PHP: provide $createTripUrl once events.create renders the creation form. --}}
                 @if(!empty($createTripUrl))<a href="{{ $createTripUrl }}" class="button button-secondary trip-full">＋ Proposer mon voyage</a>@endif
             </section>
             <section class="surface trip-practical" data-write aria-labelledby="trip-practical-heading">
                 <h2 id="trip-practical-heading">02 · Les petits détails</h2>
-                <label class="form-label" for="trip-departure">Date de départ <span aria-hidden="true">*</span></label><input class="form-input" id="trip-departure" type="date" name="departure" required value="{{ $mode === 'create' ? '' : ($trip['departure'] ?? '') }}" data-saved="{{ $trip['departure'] ?? '' }}">
-                <label class="form-label" for="trip-return">Date de retour <span aria-hidden="true">*</span></label><input class="form-input" id="trip-return" type="date" name="return" required value="{{ $mode === 'create' ? '' : ($trip['return'] ?? '') }}" data-saved="{{ $trip['return'] ?? '' }}">
-                <div class="trip-columns"><div><label class="form-label" for="trip-capacity">Places <span aria-hidden="true">*</span></label><input class="form-input" id="trip-capacity" name="capacity" type="number" min="1" step="1" required placeholder="6" value="{{ $mode === 'create' ? '' : ($trip['capacity'] ?? '') }}" data-saved="{{ $trip['capacity'] ?? '' }}"></div><div><label class="form-label" for="trip-price">Budget / pers. (€)</label><input class="form-input" id="trip-price" name="price" type="number" min="0" step="0.01" placeholder="480" value="{{ $mode === 'create' ? '' : ($trip['price'] ?? '') }}" data-saved="{{ $trip['price'] ?? '' }}"></div></div>
-                <label class="form-label" for="trip-age">Âge conseillé</label><input class="form-input" id="trip-age" name="age" placeholder="18–30 ans" value="{{ $mode === 'create' ? '' : ($trip['age'] ?? '') }}" data-saved="{{ $trip['age'] ?? '' }}">
-                <label class="form-label" for="trip-contact">Contact</label><input class="form-input" id="trip-contact" name="contact" placeholder="E-mail ou téléphone" value="{{ $mode === 'create' ? '' : ($trip['contact'] ?? '') }}" data-saved="{{ $trip['contact'] ?? '' }}">
+                <label class="form-label" for="trip-starts-at">Date et heure de début <span aria-hidden="true">*</span></label><input class="form-input" id="trip-starts-at" type="datetime-local" name="starts_at" required value="{{ old('starts_at', !empty($event->starts_at) ? \Carbon\Carbon::parse($event->starts_at)->format('Y-m-d\TH:i') : '') }}">
+                <label class="form-label" for="trip-ends-at">Date et heure de fin <span aria-hidden="true">*</span></label><input class="form-input" id="trip-ends-at" type="datetime-local" name="ends_at" required value="{{ old('ends_at', !empty($event->ends_at) ? \Carbon\Carbon::parse($event->ends_at)->format('Y-m-d\TH:i') : '') }}">
+                <div class="trip-columns"><div><label class="form-label" for="trip-capacity">Places <span aria-hidden="true">*</span></label><input class="form-input" id="trip-capacity" name="max_participants" type="number" min="1" step="1" required placeholder="6" value="{{ old('max_participants', $event->max_participants) }}"></div><div><label class="form-label" for="trip-price">Budget / pers. (€) <span aria-hidden="true">*</span></label><input class="form-input" id="trip-price" name="price" type="number" min="0" max="999999.99" step="0.01" required placeholder="480" value="{{ old('price', $event->price ?? 0) }}"></div></div>
+                <label class="form-label" for="trip-age">Âge minimum <span aria-hidden="true">*</span></label><input class="form-input" id="trip-age" name="min_age" type="number" min="0" step="1" required placeholder="18" value="{{ old('min_age', $event->min_age ?? 0) }}">
+                <label class="form-label" for="trip-contact">Contact de l’organisateur</label><input class="form-input" id="trip-contact" type="email" readonly value="{{ $event->organizer?->email ?? '' }}" placeholder="Contact à préciser">
                 <button class="button button-primary trip-full" type="submit"><span data-submit-label>{{ $mode === 'create' ? 'Proposer le voyage' : 'Enregistrer les modifications' }}</span><span aria-hidden="true">↗</span></button>
                 <p class="trip-hint trip-center">Les petits détails font les beaux voyages.</p>
             </section>
@@ -101,53 +141,35 @@
 
 @push('scripts')
 <script>
-// Mockup interactions only. No network requests or persistence.
+// The controller selects the mode; valid forms submit to Laravel.
 (() => {
     const page = document.querySelector('[data-trip-page]');
     const form = page.querySelector('[data-trip-form]');
-    const fields = [...form.querySelectorAll('[data-saved]')];
-    const drafts = {
-        edit: Object.fromEntries(fields.map(field => [field.name, field.dataset.saved])),
-        create: Object.fromEntries(fields.map(field => [field.name, ''])),
-    };
-    let mode = page.dataset.mode;
-    const title = page.querySelector('[data-mode-title]');
-    const originalTitle = @json($trip['title'] ?? 'Votre prochaine aventure');
+    const mode = page.dataset.mode;
     const feedback = page.querySelector('[data-feedback]');
     const showFeedback = text => { feedback.textContent = text; feedback.hidden = false; };
-    const setFieldState = () => fields.forEach(field => { field.disabled = mode === 'view'; });
-    setFieldState();
-    page.querySelectorAll('[name=preview_mode]').forEach(radio => radio.addEventListener('change', () => {
-        if (mode !== 'view') drafts[mode] = Object.fromEntries(fields.map(field => [field.name, field.value]));
-        mode = radio.value;
-        page.dataset.mode = mode;
-        if (mode !== 'view') fields.forEach(field => { field.value = drafts[mode][field.name]; });
-        setFieldState();
-        title.textContent = mode === 'create' ? 'Et si vous donniez le départ ?' : originalTitle;
-        page.querySelector('[data-mode-subtitle]').textContent = mode === 'create' ? 'Quelques détails pour donner aux autres l’envie de vous suivre.' : mode === 'edit' ? 'Affinez les petits détails de votre prochaine escapade.' : 'Une parenthèse pour soi. Des souvenirs à plusieurs.';
-        page.querySelector('[data-submit-label]').textContent = mode === 'create' ? 'Proposer le voyage' : 'Enregistrer les modifications';
-        feedback.hidden = true;
-        validateDates();
-        syncGallery();
-    }));
-    const departure = form.elements.departure;
-    const returning = form.elements.return;
+    form.querySelectorAll('input, select, textarea').forEach(field => { field.disabled = mode === 'view'; });
+    const startsAt = form.elements.starts_at;
+    const endsAt = form.elements.ends_at;
     const validateDates = () => {
-        returning.setCustomValidity(returning.value && departure.value && returning.value < departure.value ? 'Le retour doit être prévu après le départ.' : '');
+        endsAt.setCustomValidity(endsAt.value && startsAt.value && endsAt.value <= startsAt.value ? 'La fin doit être prévue après le début.' : '');
     };
-    departure.addEventListener('input', validateDates);
-    returning.addEventListener('input', validateDates);
+    startsAt.addEventListener('input', validateDates);
+    endsAt.addEventListener('input', validateDates);
+    validateDates();
     form.addEventListener('submit', event => {
-        event.preventDefault();
         validateDates();
-        if (!form.reportValidity()) return;
-        showFeedback(mode === 'create' ? 'Aperçu uniquement : le voyage n’a pas été créé. L’enregistrement reste à brancher.' : 'Aperçu uniquement : aucune modification enregistrée. L’enregistrement reste à brancher.');
+
+        if (mode === 'view' || !form.reportValidity()) {
+            event.preventDefault();
+        }
     });
     page.querySelector('[data-register]').addEventListener('click', () => showFeedback('Aperçu uniquement : l’inscription à ce voyage reste à brancher.'));
     const imageContainer = page.querySelector('[data-gallery-image]');
     const illustration = imageContainer.innerHTML;
-    // TODO PHP: supply actual photo URLs. Local selections are never uploaded.
-    const serverPhotos = @json(array_values($trip['images'] ?? []));
+    // Local file selections remain previews and are never uploaded.
+    const imageUrl = @json($event->image_url);
+    const serverPhotos = imageUrl ? [imageUrl] : [];
     let localPhotos = [];
     let photoIndex = 0;
     const previous = page.querySelector('[data-gallery-prev]');

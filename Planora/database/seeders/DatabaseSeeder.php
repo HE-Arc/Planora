@@ -117,22 +117,6 @@ class DatabaseSeeder extends Seeder
             ));
         }
 
-        // foreach ($events as $event) {
-        //     \App\Models\Event::create(array(
-        //         'organizer_id' => $event['organizer_id'],
-        //         'location_id' => $event['location_id'],
-        //         'title' => $event['title'],
-        //         'description' => $event['description'],
-        //         'price' => $event['price'],
-        //         'max_participants' => $event['max_participants'],
-        //         'min_age' => $event['min_age'],
-        //         'status' => $event['status'],
-        //         'starts_at' => $event['starts_at'],
-        //         'ends_at' => $event['ends_at'],
-        //         'image_url' => $event['image_url'],
-        //         'created_at' => $event['created_at'],
-        //         'updated_at' => $event['updated_at']
-        //     ));
         foreach ($events as $event) {
             \App\Models\Event::create($event);
         }
