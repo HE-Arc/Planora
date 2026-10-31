@@ -1,6 +1,6 @@
 @extends('layouts.planora')
 
-@section('title', 'Votre voyage — Planora')
+@section('title', 'Votre évènement — Planora')
 
 @section('content')
 {{-- The controller supplies $event with its location, organizer and tags relations.
@@ -11,7 +11,7 @@
 <div class="trip-page" data-trip-page data-mode="{{ $mode }}">
     <div class="trip-topline">
         {{-- TODO PHP: provide $backUrl once the home/listing page is implemented. --}}
-        @if(!empty($backUrl))<a class="trip-back" href="{{ $backUrl }}">← Tous les voyages</a>@else<span class="trip-back">VOTRE PROCHAINE ESCALE</span>@endif
+        @if(!empty($backUrl))<a class="trip-back" href="{{ $backUrl }}">← Tous les évènements</a>@else<span class="trip-back">VOTRE PROCHAINE ESCALE</span>@endif
     </div>
     <header class="trip-heading">
         <div><p class="eyebrow" data-display="eyebrow">{{ $event->location?->name ?? 'Lieu à préciser' }} · {{ $event->tags->pluck('name')->join(', ') ?: 'Aucun tag' }}</p><h1 data-mode-title>{{ $mode === 'create' ? 'Et si vous donniez le départ ?' : ($event->title ?? 'Votre prochaine aventure') }}</h1><p class="trip-lead" data-mode-subtitle>{{ $mode === 'create' ? 'Quelques détails pour donner aux autres l’envie de vous suivre.' : ($mode === 'edit' ? 'Affinez les petits détails de votre prochaine escapade.' : 'Une parenthèse pour soi. Des souvenirs à plusieurs.') }}</p></div>
@@ -51,7 +51,7 @@
             @endif
         @endif
         <div class="trip-main">
-            <section class="trip-gallery" aria-label="Aperçu du voyage">
+            <section class="trip-gallery" aria-label="Aperçu du évènement">
                 {{-- The gallery displays the event's single stored image URL. --}}
                 <div class="trip-gallery-image" data-gallery-image>
                     <svg viewBox="0 0 800 440" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration d’un paysage côtier"><path fill="#cbded8" d="M0 0h800v440H0z"/><circle fill="#fff0cb" cx="585" cy="110" r="64"/><path fill="#9db7a1" d="M0 215q190-115 360 0t440-10v235H0z"/><path fill="#77a4a0" d="M0 275q210-40 450 20t350-15v160H0z"/><path fill="#decaa6" d="M0 292q170 5 370 130l430-55v73H0z"/><path fill="#4c817e" d="M0 350q140-18 300 90H0z"/><path fill="none" stroke="#edf2e5" stroke-width="3" opacity=".65" d="M115 284h130m210 36h110m55-29h95"/></svg>
@@ -69,13 +69,13 @@
             </div>
 
             <section class="trip-story" data-read>
-                <p class="eyebrow">L’ESPRIT DU VOYAGE</p><h2>Du temps pour soi.<br><em>Des souvenirs à plusieurs.</em></h2>
-                <p class="trip-description" data-display="description">{{ $event->description ?? 'Le programme de ce voyage arrive bientôt.' }}</p>
-                <dl class="trip-facts"><div><dt>Âge minimum</dt><dd data-display="min_age">{{ isset($event->min_age) ? $event->min_age.' ans' : 'À préciser' }}</dd></div><div><dt>Le groupe</dt><dd data-display="max_participants">{{ isset($event->max_participants) ? $event->max_participants.' voyageurs' : 'À préciser' }}</dd></div><div><dt>Les tags</dt><dd data-display="tags">{{ $event->tags->pluck('name')->join(', ') ?: 'Aucun tag' }}</dd></div></dl>
+                <p class="eyebrow">L’ESPRIT DE L'ÉVÈNEMENT</p><h2>Du temps pour soi.<br><em>Des souvenirs à plusieurs.</em></h2>
+                <p class="trip-description" data-display="description">{{ $event->description ?? 'Le programme de cet évènement arrive bientôt.' }}</p>
+                <dl class="trip-facts"><div><dt>Âge minimum</dt><dd data-display="min_age">{{ isset($event->min_age) ? $event->min_age.' ans' : 'À préciser' }}</dd></div><div><dt>Le groupe</dt><dd data-display="max_participants">{{ isset($event->max_participants) ? $event->max_participants.' participants ' : 'À préciser' }}</dd></div><div><dt>Les tags</dt><dd data-display="tags">{{ $event->tags->pluck('name')->join(', ') ?: 'Aucun tag' }}</dd></div></dl>
             </section>
             <section class="surface trip-fields" data-write aria-labelledby="trip-story-heading">
-                <div class="trip-section-heading"><h2 id="trip-story-heading">01 · Racontez le voyage</h2><span>L’envie commence ici</span></div>
-                <label class="form-label" for="trip-title">Nom du voyage <span aria-hidden="true">*</span></label><input class="form-input" id="trip-title" name="title" required maxlength="255" placeholder="Une semaine au bord de l’océan" value="{{ old('title', $event->title) }}">
+                <div class="trip-section-heading"><h2 id="trip-story-heading">01 · Racontez l'évènement</h2><span>L’envie commence ici</span></div>
+                <label class="form-label" for="trip-title">Nom de l'évènement <span aria-hidden="true">*</span></label><input class="form-input" id="trip-title" name="title" required maxlength="255" placeholder="Une semaine au bord de l’océan" value="{{ old('title', $event->title) }}">
                 {{-- TODO PHP: supply all $locations and $tags choices from create/edit.
                      Without these lists, only the event's current relations are available.
                      Validate and save the selected tag associations when connecting persistence. --}}
@@ -111,7 +111,7 @@
                 <button class="button button-primary trip-full" type="button" data-register>Ça me tente ! <span aria-hidden="true">↗</span></button><p class="trip-hint trip-center">Un premier échange, puis on prépare le départ ensemble.</p>
                 <div class="trip-organizer"><span class="avatar" aria-hidden="true">{{ mb_substr($event->organizer?->email ?? 'P', 0, 1) }}</span><div><small>Votre compagnon de départ</small><strong>{{ $event->organizer?->email ?? 'Organisateur à préciser' }}</strong></div></div><p class="trip-contact">Contact : <span data-display="contact">{{ $event->organizer?->email ?? 'Contact à préciser' }}</span></p>
                 {{-- TODO PHP: provide $createTripUrl once events.create renders the creation form. --}}
-                @if(!empty($createTripUrl))<a href="{{ $createTripUrl }}" class="button button-secondary trip-full">＋ Proposer mon voyage</a>@endif
+                @if(!empty($createTripUrl))<a href="{{ $createTripUrl }}" class="button button-secondary trip-full">＋ Proposer mon évènement</a>@endif
             </section>
             <section class="surface trip-practical" data-write aria-labelledby="trip-practical-heading">
                 <h2 id="trip-practical-heading">02 · Les petits détails</h2>
@@ -120,8 +120,8 @@
                 <div class="trip-columns"><div><label class="form-label" for="trip-capacity">Places <span aria-hidden="true">*</span></label><input class="form-input" id="trip-capacity" name="max_participants" type="number" min="1" step="1" required placeholder="6" value="{{ old('max_participants', $event->max_participants) }}"></div><div><label class="form-label" for="trip-price">Budget / pers. (€) <span aria-hidden="true">*</span></label><input class="form-input" id="trip-price" name="price" type="number" min="0" max="999999.99" step="0.01" required placeholder="480" value="{{ old('price', $event->price ?? 0) }}"></div></div>
                 <label class="form-label" for="trip-age">Âge minimum <span aria-hidden="true">*</span></label><input class="form-input" id="trip-age" name="min_age" type="number" min="0" step="1" required placeholder="18" value="{{ old('min_age', $event->min_age ?? 0) }}">
                 <label class="form-label" for="trip-contact">Contact de l’organisateur</label><input class="form-input" id="trip-contact" type="email" readonly value="{{ $event->organizer?->email ?? '' }}" placeholder="Contact à préciser">
-                <button class="button button-primary trip-full" type="submit"><span data-submit-label>{{ $mode === 'create' ? 'Proposer le voyage' : 'Enregistrer les modifications' }}</span><span aria-hidden="true">↗</span></button>
-                <p class="trip-hint trip-center">Les petits détails font les beaux voyages.</p>
+                <button class="button button-primary trip-full" type="submit"><span data-submit-label>{{ $mode === 'create' ? 'Proposer l\'évènement' : 'Enregistrer les modifications' }}</span><span aria-hidden="true">↗</span></button>
+                <p class="trip-hint trip-center">Les petits détails font les beaux évènements.</p>
             </section>
         </aside>
         <p class="trip-feedback" data-feedback role="status" hidden></p>
@@ -164,7 +164,7 @@
             event.preventDefault();
         }
     });
-    page.querySelector('[data-register]').addEventListener('click', () => showFeedback('Aperçu uniquement : l’inscription à ce voyage reste à brancher.'));
+    page.querySelector('[data-register]').addEventListener('click', () => showFeedback('Aperçu uniquement : l’inscription à cet évènement reste à brancher.'));
     const imageContainer = page.querySelector('[data-gallery-image]');
     const illustration = imageContainer.innerHTML;
     // Local file selections remain previews and are never uploaded.
@@ -180,7 +180,7 @@
         if (photos.length) {
             const image = document.createElement('img');
             image.src = photos[photoIndex];
-            image.alt = `Photo ${photoIndex + 1} du voyage`;
+            image.alt = `Photo ${photoIndex + 1} de l\'évènement`;
             imageContainer.replaceChildren(image);
         } else imageContainer.innerHTML = illustration;
         page.querySelector('[data-gallery-counter]').textContent = photos.length ? `${photoIndex + 1} / ${photos.length}` : 'Illustration';

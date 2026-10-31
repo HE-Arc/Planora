@@ -20,7 +20,7 @@
         </div>
     </header>
     <main id="main" class="page-shell">@yield('content')</main>
-    <footer class="site-footer"><span>Planora © {{ date('Y') }}</span><span>Le voyage commence avec une rencontre.</span></footer>
+    <footer class="site-footer"><span>Planora © {{ date('Y') }}</span><span>Les amitiés commencent avec une rencontre.</span></footer>
     @stack('scripts')
 </body>
 </html>

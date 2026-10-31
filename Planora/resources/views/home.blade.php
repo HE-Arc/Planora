@@ -1,6 +1,6 @@
 @extends('layouts.planora')
 
-@section('title', 'Explorer les voyages — Planora')
+@section('title', 'Explorer les évènements — Planora')
 
 @section('account')
     {{-- TODO PHP: display the signed-in account or connect the login link. --}}
@@ -15,16 +15,16 @@
             <h1 id="home-title">Votre prochaine histoire<br>commence <em>ici.</em></h1>
             <p class="home-intro">Un coin du monde. Des personnes qui vous ressemblent.<br>Et cette petite envie de prendre le large.</p>
         </div>
-        <div class="home-stamp" aria-hidden="true"><span>PRENDRE LE LARGE</span><strong>↗</strong><span>ENSEMBLE</span></div>
+        <div class="home-stamp" aria-hidden="true"><span>ORGANISONS </span><strong>↗</strong><span>ENSEMBLE</span></div>
     </section>
 
-    <div class="home-searchbar" role="search" aria-label="Trouver un voyage">
-        <label class="home-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span class="home-sr-only">Rechercher un voyage</span><input id="home-search" type="search" placeholder="Un pays, une envie, une escapade…" autocomplete="off"></label>
+    <div class="home-searchbar" role="search" aria-label="Trouver un évènement">
+        <label class="home-search"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span class="home-sr-only">Rechercher un évènement</span><input id="home-search" type="search" placeholder="Un pays, une envie, une escapade…" autocomplete="off"></label>
         <label class="home-filter"><span>Votre ambiance</span><select id="home-filter"><option value="">Toutes les envies</option><option>Nature</option><option>Culture</option><option>Aventure</option><option>Détente</option></select></label>
     </div>
 
     <section aria-labelledby="home-trips-title">
-        <div class="home-section-heading"><h2 id="home-trips-title">Des départs qui donnent envie</h2><span id="home-count" aria-live="polite"></span></div>
+        <div class="home-section-heading"><h2 id="home-trips-title">Des évènements qui donnent envie</h2><span id="home-count" aria-live="polite"></span></div>
 
         <div class="home-grid">
             @foreach($events as $event)
@@ -32,9 +32,9 @@
                 <div class="home-card-image">
                     
                     @if(!empty($event['image_url']))
-                        <img src="{{ $event->image_url }}" alt="{{ $event->title ?? 'Destination du voyage' }}" loading="lazy" width="600" height="460">
+                        <img src="{{ $event->image_url }}" alt="{{ $event->title ?? 'Lieu de l\'évènement' }}" loading="lazy" width="600" height="460">
                     @else
-                        {{-- Decorative fallback illustration; replace with the trip photo. --}}
+                        {{-- Decorative fallback illustration; replace with the event photo. --}}
                         <svg viewBox="0 0 300 230" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
                             @switch($event['scene'] ?? 'coast')
                                 @case('village')
@@ -55,10 +55,10 @@
                     {{-- <span class="home-country">{{ $event['country'] ?? 'Destination à venir' }}</span> --}}
                 </div>
                 <div class="home-card-body">
-                    <p class="home-meta">{{ $event['dates'] ?? 'Dates à venir' }} <span>· {{ $event['places'] ?? 'Places à confirmer' }}</span></p>
-                    <h3>{{ $event['title'] ?? 'Une nouvelle escapade' }}</h3>
-                    <p class="home-description">{{ $event['description'] ?? 'Les détails de ce voyage arrivent bientôt.' }}</p>
-                    <div class="home-card-bottom"><span>@if(isset($event['price']))<strong>{{ $event['price'] }} €</strong> / pers.@else<strong>Budget à venir</strong>@endif</span> --}}
+                    <p class="home-meta">{{ $event['dates'] ?? 'Dates à venir' }} <span>· {{ $event['location_id'] ?? 'Places à confirmer' }}</span></p>
+                    <h3>{{ $event['title'] ?? 'Un nouvel évènement' }}</h3>
+                    <p class="home-description">{{ $event['description'] ?? 'Les détails de cet évènement arrivent bientôt.' }}</p>
+                    <div class="home-card-bottom"><span>@if(isset($event['price']))<strong>{{ $event['price'] }} €</strong> / pers.@else<strong>Budget à venir</strong>@endif</span>
                         {{-- TODO PHP: provide a the route for the event details page. --}}
                           <a class="btn btn-info" href="{{ route('events.show',$event->id) }}">Afficher</a>
                     </div>
@@ -66,13 +66,12 @@
             </article>
             @endforeach
         </div>
-        <div id="home-empty" class="home-empty" @if(count($events) > 0) hidden @endif><h3>Aucun départ à l’horizon… pour l’instant.</h3><p>Essayez une autre recherche, ou revenez découvrir les prochains voyages.</p></div>
+        <div id="home-empty" class="home-empty" @if(count($events) > 0) hidden @endif><h3>Aucune activité à l’horizon… pour l’instant.</h3><p>Essayez une autre recherche, ou revenez découvrir les prochains évènements.</p></div>
     </section>
 
-    <aside class="home-create"><div><p class="eyebrow">ET SI ON SUIVAIT VOTRE ENVIE ?</p><h2>Le prochain départ, c’est peut-être le vôtre.</h2><p>Une destination en tête ? Faites-en une aventure à partager.</p></div>
-        {{-- TODO PHP: provide $createTripUrl once the creation route is available. --}}
-        @if(!empty($createTripUrl))<a class="button button-primary" href="{{ $createTripUrl }}">Proposer un voyage <span aria-hidden="true">＋</span></a>
-        @else<button class="button button-primary" type="button" disabled title="La création de voyage sera bientôt disponible">Proposer un voyage <span aria-hidden="true">＋</span></button>@endif
+    <aside class="home-create"><div><p class="eyebrow">ET SI ON SUIVAIT VOTRE ENVIE ?</p><h2>Le prochaine évènement, c’est peut-être le vôtre.</h2><p>Un évènement en tête ? Faites-en une aventure à partager.</p></div>
+        {{-- TODO PHP: add user rights. --}}
+        <a class="button button-primary" href="{{ route('events.create') }}">Proposer un événnement <span aria-hidden="true">＋</span></a>
     </aside>
 </div>
 @endsection
@@ -107,7 +106,7 @@
             card.hidden = !visible;
             if (visible) count++;
         });
-        document.getElementById('home-count').textContent = `${count} ${count === 1 ? 'voyage à explorer' : 'voyages à explorer'}`;
+        document.getElementById('home-count').textContent = `${count} ${count === 1 ? 'évènement à explorer' : 'évènement à explorer'}`;
         document.getElementById('home-empty').hidden = count !== 0;
     }
     search.addEventListener('input', update);
