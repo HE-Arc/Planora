@@ -7,3 +7,80 @@
     --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
+
+/* Fond creme, encre vegetale et sauge. */
+:root {
+    --p-bg: #f6f5ef;
+    --p-surface: #fffefa;
+    --p-ink: #25392f;
+    --p-muted: #68746c;
+    --p-line: #dfe3d8;
+    --p-accent: #345744;
+    --p-on-accent: #fffefa;
+    --p-soft: #e6ecdf;
+    --p-warm: #eee2cb;
+    color-scheme: light;
+}
+/* Fond encre bleutee, surfaces ardoise et accent lavande. */
+:root[data-theme='dark'] {
+    --p-bg: #171d29;
+    --p-surface: #202838;
+    --p-ink: #eeedf5;
+    --p-muted: #abb2c4;
+    --p-line: #354053;
+    --p-accent: #c2b8ed;
+    --p-on-accent: #231d37;
+    --p-soft: #30334b;
+    --p-warm: #373143;
+    color-scheme: dark;
+}
+/* Utilisables dans les futures vues : bg-planora-surface, text-planora-muted, etc. */
+@theme inline {
+    --color-planora-bg: var(--p-bg);
+    --color-planora-surface: var(--p-surface);
+    --color-planora-ink: var(--p-ink);
+    --color-planora-muted: var(--p-muted);
+    --color-planora-line: var(--p-line);
+    --color-planora-accent: var(--p-accent);
+    --color-planora-on-accent: var(--p-on-accent);
+    --color-planora-soft: var(--p-soft);
+    --color-planora-warm: var(--p-warm);
+}
+.planora { margin:0; min-height:100dvh; display:flex; flex-direction:column; background:var(--p-bg); color:var(--p-ink); font-family:var(--font-sans); line-height:1.6; }
+.planora * { box-sizing:border-box; }
+.planora a { color:inherit; text-decoration:none; }
+.planora button, .planora input, .planora select, .planora textarea { font:inherit; }
+.planora :focus-visible { outline:3px solid var(--p-accent); outline-offset:4px; }
+.planora main { flex:1; width:100%; }
+.skip-link { position:fixed; top:-100px; left:20px; background:var(--p-surface); padding:15px; z-index:20; }
+.skip-link:focus { top:10px; }
+.site-header { width:100%; max-width:1320px; margin-inline:auto; padding:26px 48px; display:flex; align-items:center; gap:40px; border-bottom:1px solid var(--p-line); }
+.brand { font-size:28px; font-weight:700; letter-spacing:-1.3px; display:flex; align-items:center; gap:8px; }
+.brand-mark { background:var(--p-accent); color:var(--p-on-accent); width:34px; height:34px; display:grid; place-items:center; border-radius:11px; font-size:26px; }
+.brand-dot { color:var(--p-accent); margin-left:-8px; }
+.header-note { font-size:12px; color:var(--p-muted); }
+.header-actions { margin-left:auto; display:flex; gap:22px; align-items:center; }
+.theme-toggle { border:0; cursor:pointer; background:transparent; color:var(--p-ink); display:flex; align-items:center; gap:8px; font-size:14px; }
+.avatar { width:39px; height:39px; display:grid; place-items:center; background:var(--p-soft); border:1px solid var(--p-line); border-radius:50%; font-weight:600; }
+.page-shell { max-width:1320px; padding:58px 48px 72px; margin-inline:auto; }
+.site-footer { width:100%; max-width:1320px; margin-inline:auto; border-top:1px solid var(--p-line); padding:25px 48px; display:flex; justify-content:space-between; gap:20px; color:var(--p-muted); font-size:11px; }
+/* Primitives communes, sans mise en page propre a une vue. */
+.surface { background:var(--p-surface); border:1px solid var(--p-line); border-radius:18px; padding:28px; }
+.eyebrow { font-size:10px; letter-spacing:2px; font-weight:700; color:var(--p-accent); }
+.button { display:inline-flex; align-items:center; justify-content:center; gap:16px; min-height:48px; padding:12px 20px; border:0; border-radius:11px; cursor:pointer; font-size:13px; font-weight:600; }
+.button-primary { background:var(--p-accent); color:var(--p-on-accent)!important; }
+.button-secondary { background:var(--p-soft); color:var(--p-ink); }
+.form-label { display:block; font-size:12px; font-weight:600; margin:20px 0 8px; }
+.form-input { display:block; width:100%; border:1px solid var(--p-line); background:var(--p-bg); color:var(--p-ink); padding:12px 14px; border-radius:10px; min-height:48px; }
+.form-input::placeholder { color:var(--p-muted); }
+@media(max-width:1000px) { .header-note { display:none; } }
+@media(max-width:700px) {
+    .site-header { padding:18px 20px; }
+    .brand { font-size:24px; }
+    .header-actions { gap:14px; }
+    .theme-toggle span { display:none; }
+    .page-shell { padding:35px 20px 45px; }
+    .site-footer { padding:22px 20px; }
+    .site-footer span:last-child { max-width:160px; text-align:right; }
+    .surface { padding:22px; }
+}
