@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>@yield('title', 'Planora — Partir ensemble')</title>
     <script>try { document.documentElement.dataset.theme = localStorage.getItem('planora-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch (_) {}</script>
-    {{-- @vite(['resources/css/app.css', 'resources/js/app.js']) --}}
-    {{-- @stack('styles') --}}
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @stack('styles')
 </head>
 <body class="planora">
     <a href="#main" class="skip-link">Aller au contenu</a>
