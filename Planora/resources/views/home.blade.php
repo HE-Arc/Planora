@@ -25,27 +25,18 @@
 
     <section aria-labelledby="home-trips-title">
         <div class="home-section-heading"><h2 id="home-trips-title">Des départs qui donnent envie</h2><span id="home-count" aria-live="polite"></span></div>
-        {{-- TODO PHP: pass $trips from the controller. null = mockup examples; [] = empty state.
-             Each trip: country, title, description, tag, dates, price, places, image_url, url.
-             The examples below do not represent real offers. --}}
-        @php
-            $trips = $trips ?? [
-                ['country' => 'Portugal', 'title' => 'L’océan pour horizon', 'description' => 'Des ruelles de Lisbonne aux plages sauvages, on prend le temps.', 'tag' => 'Détente', 'dates' => '12–19 juin', 'price' => 480, 'places' => '3 places libres', 'scene' => 'coast'],
-                ['country' => 'Italie', 'title' => 'La dolce vita, ensemble', 'description' => 'Petits villages, grandes tablées et soleil de fin de journée.', 'tag' => 'Culture', 'dates' => '03–10 juillet', 'price' => 620, 'places' => '2 places libres', 'scene' => 'village'],
-                ['country' => 'Norvège', 'title' => 'L’appel du grand air', 'description' => 'Un sac à dos, des fjords et des kilomètres de souvenirs.', 'tag' => 'Nature', 'dates' => '18–25 août', 'price' => 850, 'places' => '4 places libres', 'scene' => 'mountain'],
-                ['country' => 'Maroc', 'title' => 'Sous un autre ciel', 'description' => 'Des souks aux dunes, une parenthèse loin du quotidien.', 'tag' => 'Aventure', 'dates' => '05–12 septembre', 'price' => 540, 'places' => '5 places libres', 'scene' => 'desert'],
-            ];
-        @endphp
+
         <div class="home-grid">
-            @foreach($trips as $trip)
-            <article class="home-card" data-home-card data-tag="{{ $trip['tag'] ?? '' }}">
+            @foreach($events as $event)
+            <article class="home-card" data-home-card data-tag="{{ $event['tag'] ?? '' }}">
                 <div class="home-card-image">
-                    @if(!empty($trip['image_url']))
-                        <img src="{{ $trip['image_url'] }}" alt="{{ $trip['country'] ?? 'Destination du voyage' }}" loading="lazy" width="600" height="460">
+                    
+                    @if(!empty($event['image_url']))
+                        <img src="{{ $event->image_url }}" alt="{{ $event->title ?? 'Destination du voyage' }}" loading="lazy" width="600" height="460">
                     @else
                         {{-- Decorative fallback illustration; replace with the trip photo. --}}
                         <svg viewBox="0 0 300 230" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
-                            @switch($trip['scene'] ?? 'coast')
+                            @switch($event['scene'] ?? 'coast')
                                 @case('village')
                                     <path fill="#e7d8bf" d="M0 0h300v230H0z"/><circle fill="#fff0cc" cx="222" cy="58" r="29"/><path fill="#a5b39a" d="M0 160Q90 80 180 160T300 150v80H0z"/><path fill="#c59272" d="M25 118h70v112H25zM115 90h66v140h-66zM207 133h76v97h-76z"/><path fill="#8b6152" d="m16 118 44-31 44 31zm90-28 42-35 42 35zm92 43 44-30 49 30z"/><path fill="#edcf9c" d="M45 150h15v25H45zM143 116h15v26h-15zM225 156h15v26h-15z"/>
                                     @break
@@ -60,26 +51,22 @@
                             @endswitch
                         </svg>
                     @endif
-                    <span class="home-tag">{{ $trip['tag'] ?? 'À découvrir' }}</span>
-                    <span class="home-country">{{ $trip['country'] ?? 'Destination à venir' }}</span>
+                    {{-- <span class="home-tag">{{ $event['tag'] ?? 'À découvrir' }}</span> --}}
+                    {{-- <span class="home-country">{{ $event['country'] ?? 'Destination à venir' }}</span> --}}
                 </div>
                 <div class="home-card-body">
-                    <p class="home-meta">{{ $trip['dates'] ?? 'Dates à venir' }} <span>· {{ $trip['places'] ?? 'Places à confirmer' }}</span></p>
-                    <h3>{{ $trip['title'] ?? 'Une nouvelle escapade' }}</h3>
-                    <p class="home-description">{{ $trip['description'] ?? 'Les détails de ce voyage arrivent bientôt.' }}</p>
-                    <div class="home-card-bottom"><span>@if(isset($trip['price']))<strong>{{ $trip['price'] }} €</strong> / pers.@else<strong>Budget à venir</strong>@endif</span>
-                        {{-- TODO PHP: provide a real URL for the trip details page. --}}
-                        @if(!empty($trip['url']))
-                        <a class="home-card-link" href="{{ $trip['url'] }}" aria-label="Découvrir {{ $trip['title'] ?? 'le voyage' }}">↗</a>
-                        @else
-                        <span class="home-card-link" aria-hidden="true">↗</span>
-                        @endif
+                    <p class="home-meta">{{ $event['dates'] ?? 'Dates à venir' }} <span>· {{ $event['places'] ?? 'Places à confirmer' }}</span></p>
+                    <h3>{{ $event['title'] ?? 'Une nouvelle escapade' }}</h3>
+                    <p class="home-description">{{ $event['description'] ?? 'Les détails de ce voyage arrivent bientôt.' }}</p>
+                    <div class="home-card-bottom"><span>@if(isset($event['price']))<strong>{{ $event['price'] }} €</strong> / pers.@else<strong>Budget à venir</strong>@endif</span> --}}
+                        {{-- TODO PHP: provide a the route for the event details page. --}}
+                          <a class="btn btn-info" href="{{ route('events.show',$event->id) }}">Afficher</a>
                     </div>
                 </div>
             </article>
             @endforeach
         </div>
-        <div id="home-empty" class="home-empty" @if(count($trips) > 0) hidden @endif><h3>Aucun départ à l’horizon… pour l’instant.</h3><p>Essayez une autre recherche, ou revenez découvrir les prochains voyages.</p></div>
+        <div id="home-empty" class="home-empty" @if(count($events) > 0) hidden @endif><h3>Aucun départ à l’horizon… pour l’instant.</h3><p>Essayez une autre recherche, ou revenez découvrir les prochains voyages.</p></div>
     </section>
 
     <aside class="home-create"><div><p class="eyebrow">ET SI ON SUIVAIT VOTRE ENVIE ?</p><h2>Le prochain départ, c’est peut-être le vôtre.</h2><p>Une destination en tête ? Faites-en une aventure à partager.</p></div>

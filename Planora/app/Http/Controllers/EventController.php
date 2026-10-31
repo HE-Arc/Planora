@@ -10,11 +10,13 @@ use App\Models\User;
 
 class EventController extends Controller
 {
-
+    /**
+     * Display the specified event.
+     */
     public function show(Event $event) {
         $event->load(['location', 'organizer', 'tags']);
 
-        return view('trips.form', [
+        return view('events.form', [
             'mode' => 'view',
             'event' => $event,
             'locations' => Location::orderBy('name')->get(),
@@ -23,13 +25,22 @@ class EventController extends Controller
     }
 
     public function create() {
-        return view('trips.form', [
+        return view('events.form', [
             'mode' => 'create',
             'event' => new Event(),
             'locations' => Location::orderBy('name')->get(),
             'tags' => Tag::orderBy('name')->get(),
         ]);
     }
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        $events = \App\Models\Event::latest()->get();
+        return view('home', ['events' => $events]);
+    }
+
     /**
      * Create a new event.
      */
@@ -56,7 +67,7 @@ class EventController extends Controller
     public function edit(Event $event) {
         $event->load(['location', 'organizer', 'tags']);
 
-        return view('trips.form', [
+        return view('events.form', [
             'mode' => 'edit',
             'event' => $event,
             'locations' => Location::orderBy('name')->get(),
